@@ -1,8 +1,10 @@
 function baixarPerfilConfigurado() {
+    // 1. Puxa os dados que o Rollout identificou (ou usa o padrão)
     const fps = localStorage.getItem('otm_fps') || "60";
     const jitter = localStorage.getItem('otm_jitter') || "0.1";
-
-    const configContent = `<?xml version="1.0" encoding="UTF-8"?>
+    
+    // 2. Estrutura oficial da Apple (XML/Plist)
+    const meuPerfil = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -11,6 +13,12 @@ function baixarPerfilConfigurado() {
         <dict>
             <key>PayloadType</key>
             <string>com.apple.accessibility.touchaccommodations</string>
+            <key>PayloadIdentifier</key>
+            <string>com.oliveira.v3.touch</string>
+            <key>PayloadUUID</key>
+            <string>${Math.random().toString(36).substring(2, 15)}</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
             <key>pointScanSpeed</key>
             <real>${fps}</real>
             <key>touchAccommodationsIgnoreRepeatDuration</key>
@@ -18,19 +26,36 @@ function baixarPerfilConfigurado() {
         </dict>
     </array>
     <key>PayloadDisplayName</key>
-    <string>Oliveira_OTM V3 - Elite</string>
+    <string>Oliveira_OTM V3 Elite</string>
     <key>PayloadIdentifier</key>
-    <string>com.oliveira.v3.elite</string>
+    <string>com.oliveira.v3.main</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
     <key>PayloadType</key>
     <string>Configuration</string>
     <key>PayloadUUID</key>
-    <string>D1E2F3G4-H5I6-7J8K-L9M0-N1O2P3Q4R5S6</string>
+    <string>${Math.random().toString(36).substring(2, 15)}</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
 </dict>
 </plist>`;
 
-    const blob = new Blob([configContent], { type: 'application/x-apple-aspen-config' });
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = "Oliveira_OTM_V3.mobileconfig";
-    link.click();
+    // 3. Cria o Blob (o arquivo invisível na memória)
+    const blob = new Blob([meuPerfil], { type: 'application/x-apple-aspen-config' });
+    
+    // 4. Cria o link de download forçado
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "Oliveira_OTM_V3.mobileconfig";
+    
+    // 5. Simula o toque para baixar
+    document.body.appendChild(a);
+    a.click();
+    
+    // Limpeza
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    
+    console.log("Perfil Gerado com FPS:", fps);
 }
