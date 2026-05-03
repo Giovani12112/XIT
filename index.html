@@ -4,134 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oliveira_OTM V3 | Painel Elite</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #0d1117;
-            --card-bg: #161b22;
-            --border: #30363d;
-            --blue: #58a6ff;
-            --elite: #8957e5;
-            --success: #39d353;
-            --text: #c9d1d9;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .main-card {
-            width: 100%;
-            max-width: 380px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
-
-        h2 { color: var(--blue); text-align: center; font-weight: 800; margin-bottom: 25px; }
-
-        .notification {
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 20px;
-            display: none;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 11px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-
-        textarea {
-            width: 100%;
-            height: 90px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: #58a6ff;
-            padding: 12px;
-            font-family: monospace;
-            font-size: 12px;
-            resize: none;
-            box-sizing: border-box;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn-elite { background: var(--elite); color: white; }
-        .btn-download { background: var(--blue); color: #000; display: none; }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-
-        .footer-info { text-align: center; font-size: 10px; color: #8b949e; margin-top: 20px; }
+        body { background-color: #0d1117; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
+        .main-card { width: 100%; max-width: 400px; background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 20px; text-align: center; }
+        h2 { color: #58a6ff; }
+        textarea { width: 100%; height: 80px; background: #0d1117; border: 1px solid #30363d; border-radius: 10px; color: #58a6ff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .btn-elite { background: #8957e5; color: white; }
+        /* O BOTÃO COMEÇA ESCONDIDO */
+        #btn-dl { background: #00d2ff; color: black; display: none; } 
+        #status { font-size: 14px; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
-    <h2>OLIVEIRA_OTM V3</h2>
-
-    <!-- AREA DE AVISOS -->
-    <div id="notify" class="notification"></div>
-
-    <div class="input-group">
-        <label>Código de Análise (Rollout ID)</label>
-        <textarea id="input-rollout" placeholder='Cole o código JSON aqui...'></textarea>
-        
+    <h2>Oliveira_OTM V3</h2>
+    
+    <div style="text-align: left; margin-bottom: 20px;">
+        <label style="font-size: 12px; color: #8b949e;">CALIBRAÇÃO REMOTA (ROLLOUT)</label>
+        <textarea id="input-rollout" placeholder='Cole o JSON aqui...'></textarea>
         <button class="btn btn-elite" onclick="ativarElite()">VINCULAR HARDWARE ELITE</button>
     </div>
 
-    <!-- AREA QUE APARECE APÓS VINCULAR -->
-    <div id="area-download">
-        <button class="btn btn-download" id="btn-dl" onclick="baixarPerfilConfigurado()">
-            BAIXAR PERFIL CALIBRADO
-        </button>
-    </div>
+    <!-- BOTÃO DE DOWNLOAD -->
+    <button id="btn-dl" class="btn" onclick="baixarPerfilConfigurado()">
+        BAIXAR PERFIL CALIBRADO
+    </button>
 
-    <p class="footer-info">Status: Sistema de Injeção Online</p>
+    <div id="status"></div>
 </div>
 
-<script src="app.js"></script> <!-- Link para suas funções no app.js -->
+<script src="app.js"></script>
 <script>
-    // Banco de dados interno para o código que você me enviou
+    // Dados do seu hardware
     const IDs_ELITE = {
         "68fbde79fac6f845b7757adf": { fps: 120, jitter: 0.05, nome: "iPhone Elite (Calibrado)" }
     };
 
-    function showNotify(msg, type) {
-        const n = document.getElementById('notify');
-        n.innerHTML = msg;
-        n.style.display = 'block';
-        n.style.border = `1px solid ${type === 'success' ? '#39d353' : '#f85149'}`;
-        n.style.color = type === 'success' ? '#39d353' : '#f85149';
-        n.style.backgroundColor = type === 'success' ? 'rgba(57, 211, 83, 0.1)' : 'rgba(248, 81, 73, 0.1)';
-    }
-
     function ativarElite() {
         const raw = document.getElementById('input-rollout').value;
-        
+        const statusDiv = document.getElementById('status');
+        const botaoDownload = document.getElementById('btn-dl');
+
         try {
             const data = JSON.parse(raw);
             const factorId = data.factorPackIds[0];
@@ -139,19 +54,23 @@
             if (IDs_ELITE[factorId]) {
                 const config = IDs_ELITE[factorId];
                 
-                // Salva os dados para o app.js usar no download
+                // Salva os dados
                 localStorage.setItem('otm_fps', config.fps);
                 localStorage.setItem('otm_jitter', config.jitter);
                 
-                showNotify(`✅ ${config.nome} injetado com sucesso!`, 'success');
+                // 1. Mostra a mensagem verde
+                statusDiv.innerHTML = `✅ ${config.nome} ATIVADO COM SUCESSO!`;
+                statusDiv.style.color = "#39d353";
                 
-                // MOSTRA O BOTÃO DE DOWNLOAD
-                document.getElementById('btn-dl').style.display = 'block';
+                // 2. FORÇA O BOTÃO A APARECER (AQUI ESTÁ A CHAVE)
+                botaoDownload.style.display = "block";
+                
             } else {
-                showNotify('❌ ID de Hardware não mapeado no banco Elite.', 'error');
+                statusDiv.innerHTML = "❌ Hardware não reconhecido.";
+                statusDiv.style.color = "#f85149";
             }
         } catch (e) {
-            showNotify('⚠️ Erro: Cole o código JSON completo!', 'error');
+            alert("Erro no código! Cole o JSON completo.");
         }
     }
 </script>
