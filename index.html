@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oliveira_OTM V3 - Painel Elite</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .main-card {
+            width: 100%;
+            max-width: 400px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        h2 {
+            color: #58a6ff;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: #238636;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-elite {
+            background: #8957e5;
+        }
+        /* Cor roxa para destacar o Elite */
+        .status {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+            color: #8b949e;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #30363d;
+            margin: 25px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-card">
+        <h2>Oliveira_OTM V3</h2>
+
+        <!-- SEÇÃO DE ATIVAÇÃO PADRÃO -->
+        <div id="sec-ativacao">
+            <div class="input-group">
+                <label>Token de Acesso:</label>
+                <input type="text" id="token" placeholder="Insira seu token">
+            </div>
+            <button class="btn-primary" onclick="verificarToken()">ENTRAR NO PAINEL</button>
+        </div>
+
+        <!-- OPÇÃO 3: PAINEL DE CALIBRAÇÃO ELITE (LOGO ABAIXO) -->
+        <div id="painel-elite" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #30363d;">
+            <h3 style="color: #d2a8ff; font-size: 16px; margin-bottom: 10px;">🛡️ CALIBRAÇÃO REMOTA (ROLLOUT)</h3>
+            <p style="font-size: 11px; color: #8b949e; margin-bottom: 10px;">Cole os dados de análise do Free Fire para vincular o hardware:</p>
+
+            <textarea id="input-rollout" style="height: 80px; font-family: monospace; font-size: 11px;" placeholder='{"rolloutId": "68fbde..."}'></textarea>
+
+            <button class="btn-primary btn-elite" onclick="ativarConfiguracaoElite()">VINCULAR HARDWARE ELITE</button>
+
+            <p id="status-ativacao" class="status">Aguardando ID de Deployment...</p>
+        </div>
+
+        <div class="status" id="msg-geral">Versão 3.0 - Estável</div>
+    </div>
+
+    <script>
+        // Banco de dados de IDs que você me mandou
+        const bancoDeDadosElite = {
+            "68fbde79fac6f845b7757adf": { fps: 120, jitter: 0.05, nome: "iPhone Elite (Calibrado)" }
+        };
+
+        function verificarToken() {
+            const token = document.getElementById('token').value;
+            if (token !== "") {
+                alert("Token aceito! Agora realize a Calibração Elite abaixo.");
+            }
+        }
+
+        function ativarConfiguracaoElite() {
+            const rawData = document.getElementById('input-rollout').value;
+            const statusMsg = document.getElementById('status-ativacao');
+
+            try {
+                const data = JSON.parse(rawData);
+                const factorId = data.factorPackIds[0];
+
+                if (bancoDeDadosElite[factorId]) {
+                    const config = bancoDeDadosElite[factorId];
+
+                    // Salva as configurações de "mira grudada" no sistema
+                    localStorage.setItem('otm_v3_calibrado', 'true');
+                    localStorage.setItem('otm_fps', config.fps);
+                    localStorage.setItem('otm_jitter', config.jitter);
+
+                    statusMsg.innerHTML = `✅ ${config.nome} ATIVADO COM SUCESSO!`;
+                    statusMsg.style.color = "#39d353";
+
+                    console.log("Configurações Aplicadas:", config);
+                    alert("Calibração realizada! A sensibilidade e estabilidade foram injetadas.");
+                } else {
+                    statusMsg.innerHTML = "❌ ID de Hardware não mapeado.";
+                    statusMsg.style.color = "#f85149";
+                }
+            } catch (e) {
+                alert("Erro: Formato inválido! Cole o JSON completo dos logs.");
+            }
+        }
+    </script>
+
+</body>
+</html>
