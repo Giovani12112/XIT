@@ -3,148 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oliveira_OTM V3 - Painel Elite</title>
+    <title>Oliveira_OTM V3 | Painel Elite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --blue: #58a6ff;
+            --elite: #8957e5;
+            --success: #39d353;
+            --text: #c9d1d9;
+        }
+
         body {
-            background-color: #0d1117;
-            color: white;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
             padding: 20px;
         }
 
         .main-card {
             width: 100%;
-            max-width: 400px;
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            max-width: 380px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
-        h2 {
-            color: #58a6ff;
+        h2 { color: var(--blue); text-align: center; font-weight: 800; margin-bottom: 25px; }
+
+        .notification {
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
             text-align: center;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
         }
 
-        .input-group {
-            margin-bottom: 15px;
-        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        input, textarea {
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 11px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+        textarea {
             width: 100%;
+            height: 90px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: #58a6ff;
             padding: 12px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 10px;
-            color: white;
+            font-family: monospace;
+            font-size: 12px;
+            resize: none;
             box-sizing: border-box;
         }
 
-        .btn-primary {
+        .btn {
             width: 100%;
-            padding: 15px;
-            background: #238636;
+            padding: 16px;
             border: none;
-            border-radius: 10px;
-            color: white;
-            font-weight: bold;
+            border-radius: 12px;
+            font-weight: 800;
             cursor: pointer;
+            transition: 0.3s;
             margin-top: 10px;
         }
 
-        .btn-elite {
-            background: #8957e5;
-        }
-        /* Cor roxa para destacar o Elite */
-        .status {
-            text-align: center;
-            font-size: 14px;
-            margin-top: 10px;
-            color: #8b949e;
-        }
+        .btn-elite { background: var(--elite); color: white; }
+        .btn-download { background: var(--blue); color: #000; display: none; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        hr {
-            border: 0;
-            border-top: 1px solid #30363d;
-            margin: 25px 0;
-        }
+        .footer-info { text-align: center; font-size: 10px; color: #8b949e; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <h2>Oliveira_OTM V3</h2>
+<div class="main-card">
+    <h2>OLIVEIRA_OTM V3</h2>
 
-        <!-- SEÇÃO DE ATIVAÇÃO PADRÃO -->
-        <div id="sec-ativacao">
-            <div class="input-group">
-                <label>Token de Acesso:</label>
-                <input type="text" id="token" placeholder="Insira seu token">
-            </div>
-            <button class="btn-primary" onclick="verificarToken()">ENTRAR NO PAINEL</button>
-        </div>
+    <!-- AREA DE AVISOS -->
+    <div id="notify" class="notification"></div>
 
-        <!-- OPÇÃO 3: PAINEL DE CALIBRAÇÃO ELITE (LOGO ABAIXO) -->
-        <div id="painel-elite" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #30363d;">
-            <h3 style="color: #d2a8ff; font-size: 16px; margin-bottom: 10px;">🛡️ CALIBRAÇÃO REMOTA (ROLLOUT)</h3>
-            <p style="font-size: 11px; color: #8b949e; margin-bottom: 10px;">Cole os dados de análise do Free Fire para vincular o hardware:</p>
-
-            <textarea id="input-rollout" style="height: 80px; font-family: monospace; font-size: 11px;" placeholder='{"rolloutId": "68fbde..."}'></textarea>
-
-            <button class="btn-primary btn-elite" onclick="ativarConfiguracaoElite()">VINCULAR HARDWARE ELITE</button>
-
-            <p id="status-ativacao" class="status">Aguardando ID de Deployment...</p>
-        </div>
-
-        <div class="status" id="msg-geral">Versão 3.0 - Estável</div>
+    <div class="input-group">
+        <label>Código de Análise (Rollout ID)</label>
+        <textarea id="input-rollout" placeholder='Cole o código JSON aqui...'></textarea>
+        
+        <button class="btn btn-elite" onclick="ativarElite()">VINCULAR HARDWARE ELITE</button>
     </div>
 
-    <script>
-        // Banco de dados de IDs que você me mandou
-        const bancoDeDadosElite = {
-            "68fbde79fac6f845b7757adf": { fps: 120, jitter: 0.05, nome: "iPhone Elite (Calibrado)" }
-        };
+    <!-- AREA QUE APARECE APÓS VINCULAR -->
+    <div id="area-download">
+        <button class="btn btn-download" id="btn-dl" onclick="baixarPerfilConfigurado()">
+            BAIXAR PERFIL CALIBRADO
+        </button>
+    </div>
 
-        function verificarToken() {
-            const token = document.getElementById('token').value;
-            if (token !== "") {
-                alert("Token aceito! Agora realize a Calibração Elite abaixo.");
+    <p class="footer-info">Status: Sistema de Injeção Online</p>
+</div>
+
+<script src="app.js"></script> <!-- Link para suas funções no app.js -->
+<script>
+    // Banco de dados interno para o código que você me enviou
+    const IDs_ELITE = {
+        "68fbde79fac6f845b7757adf": { fps: 120, jitter: 0.05, nome: "iPhone Elite (Calibrado)" }
+    };
+
+    function showNotify(msg, type) {
+        const n = document.getElementById('notify');
+        n.innerHTML = msg;
+        n.style.display = 'block';
+        n.style.border = `1px solid ${type === 'success' ? '#39d353' : '#f85149'}`;
+        n.style.color = type === 'success' ? '#39d353' : '#f85149';
+        n.style.backgroundColor = type === 'success' ? 'rgba(57, 211, 83, 0.1)' : 'rgba(248, 81, 73, 0.1)';
+    }
+
+    function ativarElite() {
+        const raw = document.getElementById('input-rollout').value;
+        
+        try {
+            const data = JSON.parse(raw);
+            const factorId = data.factorPackIds[0];
+
+            if (IDs_ELITE[factorId]) {
+                const config = IDs_ELITE[factorId];
+                
+                // Salva os dados para o app.js usar no download
+                localStorage.setItem('otm_fps', config.fps);
+                localStorage.setItem('otm_jitter', config.jitter);
+                
+                showNotify(`✅ ${config.nome} injetado com sucesso!`, 'success');
+                
+                // MOSTRA O BOTÃO DE DOWNLOAD
+                document.getElementById('btn-dl').style.display = 'block';
+            } else {
+                showNotify('❌ ID de Hardware não mapeado no banco Elite.', 'error');
             }
+        } catch (e) {
+            showNotify('⚠️ Erro: Cole o código JSON completo!', 'error');
         }
-
-        function ativarConfiguracaoElite() {
-            const rawData = document.getElementById('input-rollout').value;
-            const statusMsg = document.getElementById('status-ativacao');
-
-            try {
-                const data = JSON.parse(rawData);
-                const factorId = data.factorPackIds[0];
-
-                if (bancoDeDadosElite[factorId]) {
-                    const config = bancoDeDadosElite[factorId];
-
-                    // Salva as configurações de "mira grudada" no sistema
-                    localStorage.setItem('otm_v3_calibrado', 'true');
-                    localStorage.setItem('otm_fps', config.fps);
-                    localStorage.setItem('otm_jitter', config.jitter);
-
-                    statusMsg.innerHTML = `✅ ${config.nome} ATIVADO COM SUCESSO!`;
-                    statusMsg.style.color = "#39d353";
-
-                    console.log("Configurações Aplicadas:", config);
-                    alert("Calibração realizada! A sensibilidade e estabilidade foram injetadas.");
-                } else {
-                    statusMsg.innerHTML = "❌ ID de Hardware não mapeado.";
-                    statusMsg.style.color = "#f85149";
-                }
-            } catch (e) {
-                alert("Erro: Formato inválido! Cole o JSON completo dos logs.");
-            }
-        }
-    </script>
+    }
+</script>
 
 </body>
 </html>
