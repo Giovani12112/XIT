@@ -47,7 +47,7 @@ function baixarPerfilConfigurado() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = "Oliveira_OTM_V3.mobileconfig";
+    a.download = "Oliveira_OTM_V3_Assinado.mobileconfig";
     
     // 5. Simula o toque para baixar
     document.body.appendChild(a);
