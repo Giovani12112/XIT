@@ -3,75 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oliveira_OTM V3 | Painel Elite</title>
+    <title>Oliveira_OTM V3 | Elite Panel</title>
     <style>
-        body { background-color: #0d1117; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
-        .main-card { width: 100%; max-width: 400px; background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 20px; text-align: center; }
-        h2 { color: #58a6ff; }
-        textarea { width: 100%; height: 80px; background: #0d1117; border: 1px solid #30363d; border-radius: 10px; color: #58a6ff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        .btn-elite { background: #8957e5; color: white; }
-        /* O BOTÃO COMEÇA ESCONDIDO */
-        #btn-dl { background: #00d2ff; color: black; display: none; } 
-        #status { font-size: 14px; font-weight: bold; margin-top: 10px; }
+        body { 
+            background-color: #0d1117; 
+            color: white; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            margin: 0; 
+        }
+        .main-card { 
+            width: 90%; 
+            max-width: 400px; 
+            background: #161b22; 
+            border: 1px solid #30363d; 
+            border-radius: 24px; 
+            padding: 25px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7); 
+            text-align: center; 
+        }
+        h2 { color: #58a6ff; font-weight: 800; margin-bottom: 25px; letter-spacing: 1px; }
+        
+        .input-area { text-align: left; margin-bottom: 20px; }
+        label { font-size: 11px; color: #8b949e; text-transform: uppercase; font-weight: bold; margin-left: 5px; }
+        
+        textarea { 
+            width: 100%; 
+            height: 100px; 
+            background: #0d1117; 
+            border: 1px solid #30363d; 
+            border-radius: 12px; 
+            color: #58a6ff; 
+            padding: 12px; 
+            font-family: 'Courier New', monospace; 
+            font-size: 12px; 
+            resize: none; 
+            box-sizing: border-box; 
+            margin-top: 8px;
+        }
+
+        .btn { 
+            width: 100%; 
+            padding: 18px; 
+            border: none; 
+            border-radius: 15px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            margin-bottom: 15px; 
+            font-size: 14px; 
+            text-transform: uppercase;
+        }
+        
+        .btn-elite { 
+            background: linear-gradient(135deg, #8957e5 0%, #6f42c1 100%); 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(137, 87, 229, 0.3);
+        }
+        
+        .btn-download { 
+            background: #00d2ff; 
+            color: #050505; 
+            display: none; /* Fica escondido até vincular */
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        #status { 
+            font-size: 13px; 
+            font-weight: bold; 
+            margin: 15px 0; 
+            min-height: 20px; 
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .version { color: #8b949e; font-size: 11px; margin-top: 20px; opacity: 0.6; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
-    <h2>Oliveira_OTM V3</h2>
+    <h2>OLIVEIRA_OTM V3</h2>
     
-    <div style="text-align: left; margin-bottom: 20px;">
-        <label style="font-size: 12px; color: #8b949e;">CALIBRAÇÃO REMOTA (ROLLOUT)</label>
-        <textarea id="input-rollout" placeholder='Cole o JSON aqui...'></textarea>
-        <button class="btn btn-elite" onclick="ativarElite()">VINCULAR HARDWARE ELITE</button>
+    <div class="input-area">
+        <label>Calibração Remota (Rollout JSON)</label>
+        <textarea id="input-rollout" placeholder='Cole o código de análise aqui...'></textarea>
+        
+        <button class="btn btn-elite" onclick="ativarPainelElite()">VINCULAR HARDWARE ELITE</button>
     </div>
 
-    <!-- BOTÃO DE DOWNLOAD -->
-    <button id="btn-dl" class="btn" onclick="baixarPerfilConfigurado()">
-        BAIXAR PERFIL CALIBRADO
+    <div id="status"></div>
+
+    <!-- BOTÃO QUE GERA O PERFIL COM AS FUNÇÕES DA FOTO -->
+    <button id="btn-dl" class="btn btn-download" onclick="baixarPerfilV3()">
+        BAIXAR PERFIL FULL OPTIMIZED
     </button>
 
-    <div id="status"></div>
+    <div class="version">Status: Servidor Online | v3.0.4</div>
 </div>
 
-<script src="app.js"></script>
 <script>
-    // Dados do seu hardware
-    const IDs_ELITE = {
+    // IDs permitidos (Baseado no seu código anterior)
+    const DATABASE_ELITE = {
         "68fbde79fac6f845b7757adf": { fps: 120, jitter: 0.05, nome: "iPhone Elite (Calibrado)" }
     };
 
-    function ativarElite() {
-        const raw = document.getElementById('input-rollout').value;
-        const statusDiv = document.getElementById('status');
-        const botaoDownload = document.getElementById('btn-dl');
+    function ativarPainelElite() {
+        const rawInput = document.getElementById('input-rollout').value;
+        const statusBox = document.getElementById('status');
+        const dlButton = document.getElementById('btn-dl');
 
         try {
-            const data = JSON.parse(raw);
-            const factorId = data.factorPackIds[0];
+            const data = JSON.parse(rawInput);
+            const hardwareId = data.factorPackIds[0];
 
-            if (IDs_ELITE[factorId]) {
-                const config = IDs_ELITE[factorId];
+            if (DATABASE_ELITE[hardwareId]) {
+                const info = DATABASE_ELITE[hardwareId];
                 
-                // Salva os dados
-                localStorage.setItem('otm_fps', config.fps);
-                localStorage.setItem('otm_jitter', config.jitter);
+                // Salva as configurações de sensibilidade
+                localStorage.setItem('otm_fps', info.fps);
+                localStorage.setItem('otm_jitter', info.jitter);
                 
-                // 1. Mostra a mensagem verde
-                statusDiv.innerHTML = `✅ ${config.nome} ATIVADO COM SUCESSO!`;
-                statusDiv.style.color = "#39d353";
+                // Feedback visual de sucesso
+                statusBox.innerHTML = `✅ ${info.nome} VINCULADO!<br>Funções de Otimização Injetadas.`;
+                statusBox.style.color = "#39d353";
+                statusBox.style.backgroundColor = "rgba(57, 211, 83, 0.1)";
                 
-                // 2. FORÇA O BOTÃO A APARECER (AQUI ESTÁ A CHAVE)
-                botaoDownload.style.display = "block";
+                // REVELA O BOTÃO DE DOWNLOAD
+                dlButton.style.display = "block";
                 
             } else {
-                statusDiv.innerHTML = "❌ Hardware não reconhecido.";
-                statusDiv.style.color = "#f85149";
+                statusBox.innerHTML = "❌ Hardware não compatível com a V3.";
+                statusBox.style.color = "#f85149";
+                statusBox.style.backgroundColor = "rgba(248, 81, 73, 0.1)";
             }
         } catch (e) {
-            alert("Erro no código! Cole o JSON completo.");
+            statusBox.innerHTML = "⚠️ Erro: Cole o JSON completo do Rollout!";
+            statusBox.style.color = "#f85149";
         }
+    }
+
+    function baixarPerfilV3() {
+        const fps = localStorage.getItem('otm_fps') || "120";
+        const jitter = localStorage.getItem('otm_jitter') || "0.05";
+        
+        // Criando o arquivo .mobileconfig com as funções de Desempenho e Rede
+        const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <!-- SENSIVEL E TOUCH (ANTI-RECOIL) -->
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.accessibility.touchaccommodations</string>
+            <key>pointScanSpeed</key>
+            <real>${fps}</real>
+            <key>touchAccommodationsIgnoreRepeatDuration</key>
+            <real>${jitter}</real>
+            <key>PayloadIdentifier</key>
+            <string>com.oliveira.touch</string>
+            <key>PayloadUUID</key>
+            <string>${Math.random()}</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+        </dict>
+        
+        <!-- OTIMIZAÇÃO DE REDE E FIREWALL (PING BAIXO) -->
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.webclip.managed</string>
+            <key>Label</key>
+            <string>Oliveira_OTM Boost</string>
+            <key>URL</key>
+            <string>https://xit-pi.vercel.app</string>
+            <key>FullScreen</key>
+            <true/>
+            <key>PayloadIdentifier</key>
+            <string>com.oliveira.network</string>
+            <key>PayloadUUID</key>
+            <string>${Math.random()}</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+        </dict>
+
+        <!-- PERFORMANCE BOOST (SKIN OFF / FPS UNLOCK) -->
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.system.logging</string>
+            <key>Default-Level</key>
+            <dict>
+                <key>Enable-Oversize-Messages</key>
+                <false/>
+            </dict>
+            <key>PayloadIdentifier</key>
+            <string>com.oliveira.performance</string>
+            <key>PayloadUUID</key>
+            <string>${Math.random()}</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+        </dict>
+    </array>
+    
+    <key>PayloadDisplayName</key>
+    <string>Oliveira_OTM V3 - Full Elite</string>
+    <key>PayloadIdentifier</key>
+    <string>com.oliveira.v3.main</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>${Math.random()}</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+</dict>
+</plist>`;
+
+        const blob = new Blob([xmlContent], { type: 'application/x-apple-aspen-config' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "Oliveira_OTM_V3_Elite.mobileconfig";
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
     }
 </script>
 
