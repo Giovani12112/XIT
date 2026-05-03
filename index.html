@@ -56,6 +56,8 @@
             margin-bottom: 15px; 
             font-size: 14px; 
             text-transform: uppercase;
+            text-decoration: none;
+            display: block;
         }
         
         .btn-elite { 
@@ -67,7 +69,7 @@
         .btn-download { 
             background: #00d2ff; 
             color: #050505; 
-            display: none; /* Fica escondido até vincular */
+            display: none; 
             box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
         }
 
@@ -99,18 +101,17 @@
 
     <div id="status"></div>
 
-    <!-- BOTÃO QUE GERA O PERFIL COM AS FUNÇÕES DA FOTO -->
-    <button id="btn-dl" class="btn btn-download" onclick="baixarPerfilV3()">
+    <!-- BOTÃO MODIFICADO PARA DOWNLOAD DIRETO DO ARQUIVO ASSINADO -->
+    <a href="Oliveira_OTM_V3_Assinado.mobileconfig" id="btn-dl" class="btn btn-download" download>
         BAIXAR PERFIL FULL OPTIMIZED
-    </button>
+    </a>
 
     <div class="version">Status: Servidor Online | v3.0.4</div>
 </div>
 
 <script>
-    // IDs permitidos (Baseado no seu código anterior)
     const DATABASE_ELITE = {
-        "68fbde79fac6f845b7757adf": { fps: 120, jitter: 0.05, nome: "iPhone Elite (Calibrado)" }
+        "68fbde79fac6f845b7757adf": { nome: "iPhone Elite (Calibrado)" }
     };
 
     function ativarPainelElite() {
@@ -125,16 +126,11 @@
             if (DATABASE_ELITE[hardwareId]) {
                 const info = DATABASE_ELITE[hardwareId];
                 
-                // Salva as configurações de sensibilidade
-                localStorage.setItem('otm_fps', info.fps);
-                localStorage.setItem('otm_jitter', info.jitter);
-                
-                // Feedback visual de sucesso
-                statusBox.innerHTML = `✅ ${info.nome} VINCULADO!<br>Funções de Otimização Injetadas.`;
+                statusBox.innerHTML = `✅ ${info.nome} VINCULADO!<br>Acesso liberado ao arquivo assinado.`;
                 statusBox.style.color = "#39d353";
                 statusBox.style.backgroundColor = "rgba(57, 211, 83, 0.1)";
                 
-                // REVELA O BOTÃO DE DOWNLOAD
+                // REVELA O BOTÃO DE DOWNLOAD DO ARQUIVO REAL
                 dlButton.style.display = "block";
                 
             } else {
@@ -146,94 +142,6 @@
             statusBox.innerHTML = "⚠️ Erro: Cole o JSON completo do Rollout!";
             statusBox.style.color = "#f85149";
         }
-    }
-
-    function baixarPerfilV3() {
-        const fps = localStorage.getItem('otm_fps') || "120";
-        const jitter = localStorage.getItem('otm_jitter') || "0.05";
-        
-        // Criando o arquivo .mobileconfig com as funções de Desempenho e Rede
-        const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>PayloadContent</key>
-    <array>
-        <!-- SENSIVEL E TOUCH (ANTI-RECOIL) -->
-        <dict>
-            <key>PayloadType</key>
-            <string>com.apple.accessibility.touchaccommodations</string>
-            <key>pointScanSpeed</key>
-            <real>${fps}</real>
-            <key>touchAccommodationsIgnoreRepeatDuration</key>
-            <real>${jitter}</real>
-            <key>PayloadIdentifier</key>
-            <string>com.oliveira.touch</string>
-            <key>PayloadUUID</key>
-            <string>${Math.random()}</string>
-            <key>PayloadVersion</key>
-            <integer>1</integer>
-        </dict>
-        
-        <!-- OTIMIZAÇÃO DE REDE E FIREWALL (PING BAIXO) -->
-        <dict>
-            <key>PayloadType</key>
-            <string>com.apple.webclip.managed</string>
-            <key>Label</key>
-            <string>Oliveira_OTM Boost</string>
-            <key>URL</key>
-            <string>https://xit-pi.vercel.app</string>
-            <key>FullScreen</key>
-            <true/>
-            <key>PayloadIdentifier</key>
-            <string>com.oliveira.network</string>
-            <key>PayloadUUID</key>
-            <string>${Math.random()}</string>
-            <key>PayloadVersion</key>
-            <integer>1</integer>
-        </dict>
-
-        <!-- PERFORMANCE BOOST (SKIN OFF / FPS UNLOCK) -->
-        <dict>
-            <key>PayloadType</key>
-            <string>com.apple.system.logging</string>
-            <key>Default-Level</key>
-            <dict>
-                <key>Enable-Oversize-Messages</key>
-                <false/>
-            </dict>
-            <key>PayloadIdentifier</key>
-            <string>com.oliveira.performance</string>
-            <key>PayloadUUID</key>
-            <string>${Math.random()}</string>
-            <key>PayloadVersion</key>
-            <integer>1</integer>
-        </dict>
-    </array>
-    
-    <key>PayloadDisplayName</key>
-    <string>Oliveira_OTM V3 - Full Elite</string>
-    <key>PayloadIdentifier</key>
-    <string>com.oliveira.v3.main</string>
-    <key>PayloadRemovalDisallowed</key>
-    <false/>
-    <key>PayloadType</key>
-    <string>Configuration</string>
-    <key>PayloadUUID</key>
-    <string>${Math.random()}</string>
-    <key>PayloadVersion</key>
-    <integer>1</integer>
-</dict>
-</plist>`;
-
-        const blob = new Blob([xmlContent], { type: 'application/x-apple-aspen-config' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = "Oliveira_OTM_V3_Assinado.mobileconfig";
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
     }
 </script>
 
